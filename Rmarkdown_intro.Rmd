@@ -1,0 +1,69 @@
+---
+title: "Rmarkdown and the `iris` Dataset"
+output: github_document
+---
+
+## What is RMarkdown?
+
+Rmarkdown is a variant of markdown that makes it easy to incorporate R code into your documents. This allows you to do neat things like generating plots and summarizing your data right in your document. Among other benefits, it means that you don't need to rewrite your document if you get more data.
+
+## The `iris` Dataset
+
+This dataset is a collection flower morphology measurements taken from three species of iris collected by Edgar Anderson. This dataset also has the benefit of being included in base R, which is nice.
+
+![](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png)
+*Image shamelessly taken from DataCamp's [Machine Learning in R for Beginners](https://www.datacamp.com/community/tutorials/machine-learning-in-r)*
+
+### Getting a Sense of the Data
+
+The first thing to do with any new data set is to double check the variables. To do this without flooding your console, try the `head()` command.
+
+```{r, echo=F}
+head(iris)
+```
+
+Want to know the dimmensions of the dataset? Try `dim()`
+
+```{r, echo=F}
+dim(iris)
+```
+*Note that the first output is the number of rows, second is columns.*
+
+Unclear on what type of data you're looking at? Try the `str()` command.
+
+```{r, echo=F}
+str(iris)
+```
+
+
+### Looking for Distributions and Patterns
+
+Now let's how the data are distributed. The `summary()` command will calculate some simple summary stats for each column. 
+
+```{r, echo=F}
+summary(iris)
+```
+
+One simple way to look for covariation between numerical data is to plot them using a scatter plot. The `pairs()` function lets you plot all variables in a dataset against each other in this way.
+
+```{r, echo=F}
+pairs(iris)
+```
+
+But this gets messy quickly, so let's clean it up.
+
+```{r, echo=F}
+pairs(iris[1:4], panel = function(x, y, ...){
+  points(x,y, col = rgb(0,0,0,0.4), cex = 0.4)
+  abline(lm(y~x), col = 'red')
+})
+```
+
+While there are a few strong trends, it seems the data are confounded by the only non-numeric variable, `Species`. Let's use `ggplot2` to look at how species affects the correlation between one of these pairs of floral traits.
+
+```{r, echo=F}
+library(ggplot2, quietly = T)
+ggplot(iris, aes(Sepal.Width, Sepal.Length, colour = Species)) +
+  geom_point() +
+  geom_smooth(method = lm, se=F)
+```
